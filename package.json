@@ -6,7 +6,7 @@
   "author": "Jovica Aleksic <jovica.aleksic@loopmode.de>",
   "scripts": {
     "build": "rm -rf lib/* && babel src --out-dir lib",
-    "prepublish": "yarn build"
+    "prepublishOnly": "yarn build"
   },
   "repository": {
     "type": "git",
