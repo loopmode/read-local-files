@@ -1,6 +1,6 @@
 {
   "name": "@loopmode/read-local-files",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "lib/readLocalFiles.js",
   "license": "MIT",
   "author": "Jovica Aleksic <jovica.aleksic@loopmode.de>",
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git@github.com:loopmode/read-local-files.git"
   },
-  "dependencies": {
+  "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1"
   }
