@@ -1,5 +1,5 @@
 /**
- * Prints the user to select one or more local files and returns a promise for the file contents. 
+ * Prompts the user to select one or more local files and returns a promise for the file contents. 
  * 
  * The file contents are wrapped in `FileReader` objects.
  * Use the `result` property of each resolved file reader to access the file contents as a string. 
