@@ -1,9 +1,12 @@
 /**
- * Reads a local file and returns a promise for its contents. 
+ * Prints the user to select one or more local files and returns a promise for the file contents. 
  * 
- * The file contents are wrapped in a `FileReader` object.
- * Use the `result` property of the resolved file reader to access the file contents as a string. 
+ * The file contents are wrapped in `FileReader` objects.
+ * Use the `result` property of each resolved file reader to access the file contents as a string. 
  * 
+ * The promise is kept alive until the user confirms the native file-open-dialog.
+ * It is resolved when the user confirms or rejected when the user cancels.
+ *
  * @param options.rejectTimeout Optional timeout in milliseconds for automatic rejection of the promise. Defaults to 500.
  * @param options.encoding Optional encoding for the FileReader API. Defaults to `UTF-8`.
  */
