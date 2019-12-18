@@ -1,28 +1,33 @@
+export const ERR_ABORTED = new Error('ERR_ABORTED');
+
 /**
- * Prompts the user to select one or more local files and returns a promise for the file contents. 
- * 
- * The file contents are wrapped in `FileReader` objects.
- * Use the `result` property of each resolved file reader to access the file contents as a string. 
- * 
- * The promise is kept alive until the user confirms the native file-open-dialog.
- * It is resolved when the user confirms or rejected when the user cancels.
+ * Prompts the user to select one or more local files and returns a promise for the file contents.
+ * The promise is kept alive until the user confirms or cancels the native dialog for selecting files.
  *
- * @param options.rejectTimeout Optional timeout in milliseconds for automatic rejection of the promise. Defaults to 500.
+ * When the user confirms, the promise is resolved with an array of [`FileReader`](https://developer.mozilla.org/en-US/docs/Web/API/FileReader) objects.
+ * When the user aborts, the promise is rejected with an `ERR_ABORTED` error.
+ *
+ * @param options.multiple Whether to allow multiple file selection
+ * @param options.rejectTimeout Timeout in milliseconds for rejecting of the promise after dialog is closed. This is a buffer time to avoid false detections. Defaults to 500. 
  * @param options.encoding Optional encoding for the FileReader API. Defaults to `UTF-8`.
+ * @return {FileReader[]} An array of `RileReader` objects.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/FileReader
  */
 export function readLocalFile({
+  multiple,
   encoding,
   rejectTimeout = 500
 }: //
 {
+  multiple?: boolean;
   encoding?: string;
   rejectTimeout?: number;
 } = {}): Promise<(FileReader | null)[]> {
   //
   return new Promise((resolve, reject) => {
-    const el = document.createElement("input");
     let isResolved: boolean;
     let rejectTimeoutID: number;
+
     const abort = (event: MouseEvent | FocusEvent) => {
       removeListeners();
       rejectTimeoutID = window.setTimeout(() => {
@@ -32,25 +37,31 @@ export function readLocalFile({
         if (isResolved) {
           return;
         }
-        reject(new Error("ERR_ABORTED"));
+        reject(ERR_ABORTED);
       }, rejectTimeout);
     };
+
     const removeListeners = () => {
       window.clearTimeout(rejectTimeoutID);
-      window.removeEventListener("mousemove", abort);
-      window.removeEventListener("focus", abort);
+      window.removeEventListener('mousemove', abort);
+      window.removeEventListener('focus', abort);
     };
+
+    const el = document.createElement('input');
+    if (multiple) {
+      el.setAttribute('multiple', 'multiple');
+    }
+    el.setAttribute('type', 'file');
     el.onchange = (event: Event) => {
       const target = event.target as HTMLInputElement;
       if (!target.files) {
         return;
       }
-
-      const readPromises = Array.from(target.files).map(file =>
+      const readerPromises = Array.from(target.files).map(file =>
         readOneFile(file, encoding)
       );
 
-      Promise.all(readPromises)
+      Promise.all(readerPromises)
         .then(events => {
           const fileContents = [...events].map(e => e.target);
           isResolved = true;
@@ -58,17 +69,14 @@ export function readLocalFile({
           resolve(fileContents);
         })
         .catch(error => {
-          console.warn({ error });
           abort(error);
         });
     };
 
-    el.setAttribute("type", "file");
-    el.setAttribute("multiple", "multiple");
     el.click();
 
-    window.addEventListener("mousemove", abort);
-    window.addEventListener("focus", abort);
+    window.addEventListener('mousemove', abort);
+    window.addEventListener('focus', abort);
   });
 }
 
@@ -79,13 +87,11 @@ export function readOneFile(
   return new Promise((resolve, reject) => {
     const reader = new window.FileReader();
     reader.onerror = event => {
-      console.error(event);
       reject(event);
     };
     reader.onload = event => {
       resolve(event);
     };
-
     reader.readAsText(file, encoding);
   });
 }

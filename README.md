@@ -5,7 +5,8 @@ The function returns a promise that is resolved when the user picks files and re
 
 Cancel detection happens using `focus` and `mousemove` event listeners on the window object.
 
-The promise is resolved with an array of `HTMLInputElement` objects of `type="file"` inputs. Each has a `result` property that holds the content of the loaded file.
+Once the user confirms the native file select dialog, the promise is resolved with an array of `FileReader` objects. Each has a `result` property that holds the content of the loaded file.
+If the user cancels the dialog, the promise is rejected with an `ERR_ABORTED` error.
 
 ## Installation
 
@@ -33,24 +34,7 @@ async function handleLoadClick() {
     }
 }
 ```
-
-Using `Promise`
-
-```javascript
-import readLocalFiles from '@loopmode/read-local-files';
-
-async function handleLoadClick() {
-    readLocalFiles()
-        .then(fileInputs => {
-            const data = fileInputs.map(input => JSON.parse(input.result))
-            console.log({data})
-        })
-        .catch(error => {
-            console.warn(error)
-        });
-}
-```
-
+ 
 ## Options
 
 You shouldn't really need these..
