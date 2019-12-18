@@ -1,11 +1,14 @@
 {
   "name": "@loopmode/read-local-files",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "lib/readLocalFiles.js",
   "license": "MIT",
   "author": "Jovica Aleksic <jovica.aleksic@loopmode.de>",
+  "files": [
+    "lib/*"
+  ],
   "scripts": {
-    "build": "rm -rf lib/* && babel src --out-dir lib",
+    "build": "rm -rf lib/* && tsc",
     "prepublishOnly": "yarn build"
   },
   "repository": {
@@ -13,7 +16,6 @@
     "url": "git@github.com:loopmode/read-local-files.git"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1"
+    "typescript": "^3.7.3"
   }
 }
